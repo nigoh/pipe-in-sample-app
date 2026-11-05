@@ -1,0 +1,82 @@
+# pipe-in のパイプ：公式のサイトから制度の数字を集め、出典つきの報告と、/pipe-in に渡す要件メモの案にまとめる
+#
+# 元は pipe-in の見本 examples/research。違いは、Web を公式のサイトだけに開けたこと（research/official-sources.json と同じ一覧）。
+# WebSearch は使えず、書いた場所への WebFetch だけ。まとめサイト・ニュースは数字が食い違うので見ない。
+# 報告をまとめる段だけが docs/research/ に書ける。モデルは利用料を抑えるため sonnet にする。
+
+[pipe]
+kind = "linear"
+label = "制度の数字を調べる（問い → 公式のサイトで調べる → まとめる → 出典の突き合わせ）"
+description = "手取り・年収の壁の計算に要る制度の数字を、公式のサイトだけから出典と引用つきで集め、報告と要件メモの案にまとめる"
+input = "required"  # 調べたいこと（例: 2026年の所得税の基礎控除と給与所得控除）
+
+[[stages]]
+name = "frame"
+label = "問いを整える"
+output = "01_question.md"
+access = "read"
+review = true
+model = "sonnet"
+max_turns = 20
+max_budget_usd = 0.5
+prompt_file = "prompts/01_frame.md"
+
+[[stages]]
+name = "gather"
+label = "公式のサイトで調べる"
+output = "02_findings.md"
+access = "read"
+web = ["www.nta.go.jp", "www.mhlw.go.jp", "www.kyoukaikenpo.or.jp", "www.nenkin.go.jp", "www.cfa.go.jp", "www.soumu.go.jp", "elaws.e-gov.go.jp", "laws.e-gov.go.jp"]
+model = "sonnet"
+max_turns = 60
+max_budget_usd = 2.0
+prompt_file = "prompts/02_gather.md"
+
+[[stages]]
+name = "summarize"
+label = "まとめる"
+output = "03_report.md"
+access = "docs"
+docs_dir = "docs/research"
+review = true
+model = "sonnet"
+max_turns = 30
+max_budget_usd = 1.0
+prompt_file = "prompts/03_summarize.md"
+
+[[stages]]
+name = "verify"
+label = "出典と中身の突き合わせ"
+output = "04_verify.md"
+access = "read"
+web = ["www.nta.go.jp", "www.mhlw.go.jp", "www.kyoukaikenpo.or.jp", "www.nenkin.go.jp", "www.cfa.go.jp", "www.soumu.go.jp", "elaws.e-gov.go.jp", "laws.e-gov.go.jp"]
+model = "sonnet"
+max_turns = 50
+max_budget_usd = 1.5
+prompt_file = "prompts/04_verify.md"
+# 出典と中身が合っていなければ、直す点を添えて「まとめる」段へ戻す（2回まで）
+[stages.check]
+verdict = true
+# 見出しが3つ以上・出典の URL が1つ以上・URL はどれも https で公式の一覧のサイトだけ（scripts/check-research.mjs。テストは scripts/check-research.test.mjs）
+command = "node scripts/check-research.mjs docs/research/report.md"
+on_fail = "summarize"
+max_retries = 2
+
+[stages.check.judge]
+threshold = 0.7
+
+[[stages.check.judge.criteria]]
+name = "数字と出典の一致"
+description = "報告の数字（金額・率・期間）が、添えた出典のページに書かれた数字と合っている"
+
+[[stages.check.judge.criteria]]
+name = "いつの制度かの明示"
+description = "数字ごとに、適用される年・年度・月（例: 令和8年分の所得税・2026年5月の給与から）が書かれている"
+
+[[stages.check.judge.criteria]]
+name = "分からないことの書き分け"
+description = "確かめられたことと、分からないこと・推測・まだ決まっていない制度が、分けて書かれている"
+
+[[stages.check.judge.must]]
+name = "出典のない数字がない"
+description = "報告に、公式のサイトの出典（URL と逐語の引用）のない数字がありますか（ある＝違反）"

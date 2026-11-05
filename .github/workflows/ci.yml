@@ -1,0 +1,28 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22.23.4"
+          cache: npm
+      - run: npm ci
+      - run: npm test
+      - run: npm run typecheck
+      - run: npm run build
+      # 調べ物の報告があるときだけ、出典が公式のサイトだけかを確かめる
+      - name: 調べ物の報告の検査
+        run: |
+          if [ -f docs/research/report.md ]; then npm run check:research; else echo "報告なし"; fi
