@@ -1,0 +1,10 @@
+// Cloudflare Workers の設定。Git とつないだ Workers のビルドが `npx wrangler deploy` で読む（docs/deploy.md・D0002）。
+// サイトは静的なファイルだけなので、Worker のコードは持たず、npm run build が書き出した dist/ をそのまま配る。
+{
+  "name": "pipe-in-sample-app",
+  "compatibility_date": "2026-10-01",
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "404-page"
+  }
+}
