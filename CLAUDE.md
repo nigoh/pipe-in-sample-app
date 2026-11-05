@@ -12,7 +12,8 @@ npm ci
 npm test              # node:test。src/**/*.test.ts と scripts/**/*.test.mjs
 npm run typecheck     # astro check
 npm run build         # dist/ に書き出す
-npm run check:research   # docs/research/report.md の出典を確かめる
+npm run fetch:sources    # 公式のページを research/cache/ に取ってくる（D0003）
+npm run check:research   # docs/research/report.md の出典と引用を確かめる
 ```
 
 変えたら、テスト・型検査・ビルドを流してから終える。CI（`.github/workflows/ci.yml`）も同じものを流す。

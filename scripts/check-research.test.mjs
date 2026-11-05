@@ -45,3 +45,40 @@ test("http（暗号化なし）の URL は不合格", () => {
   assert.equal(r.ok, false);
   assert.match(r.problems.join("\n"), /https/);
 });
+
+// ---- 引用が、取ってきた本文にそのまま入っているか（D0003） ----
+import { extractQuotes, checkQuotes } from "./check-research.mjs";
+
+test("表の行から、URL と「」の引用を組で取り出す（入れ子の「」も1つの引用として扱う）", () => {
+  const md = [
+    "| 項目 | 値 | 出典 | 引用 |",
+    "|---|---|---|---|",
+    "| 支援金率 | 0.23 | https://www.kyoukaikenpo.or.jp/a/003 | 「令和8年4月分（5月納付分）から 0.23％」 |",
+    "| 扶養 | － | https://www.kyoukaikenpo.or.jp/b | 「「収入要件」に該当した場合」 |",
+    "本文の「引用ではない」文",
+  ].join("\n");
+  assert.deepEqual(extractQuotes(md), [
+    { urls: ["https://www.kyoukaikenpo.or.jp/a/003"], quote: "令和8年4月分（5月納付分）から 0.23％" },
+    { urls: ["https://www.kyoukaikenpo.or.jp/b"], quote: "「収入要件」に該当した場合" },
+  ]);
+});
+
+test("引用が取ってきた本文にあれば合格（全角・半角と空白の違いは見ない）", () => {
+  const md = "| a | https://www.nta.go.jp/x | 「収入金額×30％+80,000円」 |";
+  const cache = (url) => (url === "https://www.nta.go.jp/x" ? "表 収入金額 × 30% + 80,000円 まで" : null);
+  assert.deepEqual(checkQuotes(md, cache), []);
+});
+
+test("引用が本文に無ければ、その引用と URL を挙げて不合格", () => {
+  const md = "| a | https://www.nta.go.jp/x | 「基礎控除は100万円」 |";
+  const problems = checkQuotes(md, () => "基礎控除は95万円");
+  assert.equal(problems.length, 1);
+  assert.match(problems[0], /基礎控除は100万円/);
+  assert.match(problems[0], /www\.nta\.go\.jp\/x/);
+});
+
+test("出典の本文を取ってきていなければ不合格（npm run fetch:sources を促す）", () => {
+  const md = "| a | https://www.nta.go.jp/x | 「何か」 |";
+  const problems = checkQuotes(md, () => null);
+  assert.match(problems.join("\n"), /fetch:sources/);
+});

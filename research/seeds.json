@@ -1,0 +1,21 @@
+{
+  "note": "取ってくる出発点の公式のページ。follow が true なら、ページの中のリンクのうち match の文字を含むものを1段だけたどる（40件まで）。URL は公式のサイトの検索で見つけたもので、数字はここに書かない（D0003）。",
+  "seeds": [
+    { "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1199.htm" },
+    { "url": "https://www.nta.go.jp/taxes/shiraberu/taxanswer/shotoku/1410.htm" },
+    { "url": "https://www.nta.go.jp/users/gensen/2026kiso/index.htm", "follow": true, "match": ["/2026kiso/", ".pdf"] },
+    { "url": "https://www.kyoukaikenpo.or.jp/about/business/insurance_rate/001/index.html" },
+    { "url": "https://www.kyoukaikenpo.or.jp/about/business/insurance_rate/002/index.html" },
+    { "url": "https://www.kyoukaikenpo.or.jp/about/business/insurance_rate/003/index.html" },
+    { "url": "https://www.kyoukaikenpo.or.jp/about/business/insurance_rate/premium_prefectures/r08/index.html", "follow": true, "match": ["tokyo"] },
+    { "url": "https://www.kyoukaikenpo.or.jp/g3/cat320/sb3160/" },
+    { "url": "https://www.nenkin.go.jp/service/kounen/hokenryo/ryogaku/ryogakuhyo/index.html" },
+    { "url": "https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/0000108634.html", "follow": true, "match": [".pdf"] },
+    { "url": "https://www.nenkin.go.jp/oshirase/taisetu/jigyosho/2026/202610/100104.html" },
+    { "url": "https://www.mhlw.go.jp/tekiyoukakudai/jugyouin/taisho/" },
+    { "url": "https://www.mhlw.go.jp/tekiyoukakudai/qa/" },
+    { "url": "https://www.mhlw.go.jp/stf/taiou_001_00002.html" },
+    { "url": "https://www.soumu.go.jp/main_content/001066239.pdf" },
+    { "url": "https://www.soumu.go.jp/main_content/001047636.pdf" }
+  ]
+}

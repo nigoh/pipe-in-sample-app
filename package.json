@@ -11,7 +11,8 @@
     "preview": "astro preview",
     "typecheck": "astro check",
     "test": "node --test \"src/**/*.test.ts\" \"scripts/**/*.test.mjs\"",
-    "check:research": "node scripts/check-research.mjs docs/research/report.md"
+    "check:research": "node scripts/check-research.mjs docs/research/report.md",
+    "fetch:sources": "node --use-env-proxy scripts/fetch-sources.mjs"
   },
   "dependencies": {
     "@astrojs/sitemap": "3.7.4",
