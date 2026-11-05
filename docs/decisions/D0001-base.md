@@ -34,4 +34,5 @@
 
 ## 追記（CI）
 
-- GitHub Actions の actions は、pipe-in と同じく完全なコミットの SHA で固定する（`@v4` のような版の名前で書いたら、job が手順を1つも始めずに落ちた。SHA での固定を求める設定に当たったと見ている）。runner も `ubuntu-24.04` に固定する。
+- GitHub Actions の actions は、pipe-in と同じく完全なコミットの SHA で固定する（書き換えられた版の名前を引かないため）。runner も `ubuntu-24.04` に固定する。
+- このリポジトリは非公開なので、Actions はアカウントの利用枠（分数）を使う。初めの CI は、job が runner を割り当てられないまま2秒で落ちた（SHA で固定しても同じ）。利用枠か支払いの上限に当たったと見ている（まだ確かめていない。人が GitHub の設定の Billing で確かめる）。
