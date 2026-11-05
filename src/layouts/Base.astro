@@ -1,0 +1,62 @@
+---
+// すべてのページの外枠。注意書き（計算は目安・もとの公式の文書へ）を必ず出す。
+interface Props {
+  title: string;
+  description: string;
+  updated: string; // 最終更新日（YYYY-MM-DD）
+}
+const { title, description, updated } = Astro.props;
+const siteName = "手取りと年収の壁の計算";
+---
+<!doctype html>
+<html lang="ja">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{title} | {siteName}</title>
+    <meta name="description" content={description} />
+    <meta name="color-scheme" content="light dark" />
+  </head>
+  <body>
+    <header><a href="/">{siteName}</a></header>
+    <main><slot /></main>
+    <footer>
+      <p>
+        ここでの計算は目安です。実際の金額は、勤め先・保険者・自治体によって変わります。
+        もとの数字は、国税庁・厚生労働省などの公式の文書で確かめてください。
+      </p>
+      <p>最終更新日: <time datetime={updated}>{updated}</time></p>
+    </footer>
+  </body>
+</html>
+
+<style is:global>
+  :root {
+    --bg: #ffffff;
+    --fg: #1a1a1a;
+    --muted: #555555;
+    --link: #0b57d0;
+    --line: #dddddd;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg: #121212;
+      --fg: #ececec;
+      --muted: #b0b0b0;
+      --link: #8ab4f8;
+      --line: #333333;
+    }
+  }
+  body {
+    margin: 0 auto;
+    max-width: 44rem;
+    padding: 0 16px;
+    background: var(--bg);
+    color: var(--fg);
+    font-family: system-ui, "Hiragino Sans", "Noto Sans JP", sans-serif;
+    line-height: 1.8;
+  }
+  a { color: var(--link); }
+  header { padding: 1rem 0; border-bottom: 1px solid var(--line); }
+  footer { margin-top: 3rem; padding: 1rem 0; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.875rem; }
+</style>
