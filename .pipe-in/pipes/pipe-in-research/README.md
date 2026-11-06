@@ -13,8 +13,17 @@
 | `verify` | `04_verify.md` | read | 公式のサイトへの WebFetch だけ | なし |
 
 - 公式のサイトの一覧は `research/official-sources.json` と `pipe.toml` の `web` の2か所にあります。足すときは両方をそろえ、理由を決定の記録に書きます。
-- `verify` のあとで、`node scripts/check-research.mjs` が報告を機械で確かめます（見出し・出典の URL が公式のサイトだけか）。合わなければ `summarize` へ戻します（2回まで）。CI も同じ検査を流します。
+- `verify` のあとで、`node scripts/check-research.mjs` が報告を機械で確かめます（見出し・出典の URL が公式のサイトだけか・表の引用が `research/cache/` の本文にそのまま入っているか）。合わなければ `summarize` へ戻します（2回まで）。CI も同じ検査を流します。
 - どの段もモデルは sonnet です（利用料を抑えるため）。上限は段ごとの `max_budget_usd` の合計で $5.0 です。
+
+## 流す前に：公式のページを取ってくる
+
+```bash
+npm run fetch:sources                 # research/seeds.json の出発点と、そこからたどれるリンク
+npm run fetch:sources -- <URL> …      # 調べる段が「取ってきてほしい URL」に書いたもの
+```
+
+Claude を使わない決まった手順で、一覧のサイトの https だけを取り、本文を `research/cache/` に置きます（PDF は `pdftotext` で文字にする。poppler-utils が要る）。WebFetch は PDF を読めず、HTML も要約を返すことがあるため、引用は取ってきた本文から写します（D0003）。
 
 ## 流し方
 
